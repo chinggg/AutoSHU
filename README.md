@@ -14,9 +14,13 @@ An extensible python script to automatically do trivial tasks in SHU
 直接运行`main.py`  
 用户信息存放于`key.txt`中
 ## 已实现功能
+
+目前所有信息仅输出在屏幕，并未保存至本地。
+
 #### 网上教学平台
 - 批量回复讨论区话题
 - 批量获取讨论区文件链接
+- 获得某课程同学人数及名单
 ## 预期功能
 #### 总体架构
 - 完善业务逻辑，统一代码风格，使结构清晰便于维护
@@ -25,7 +29,7 @@ An extensible python script to automatically do trivial tasks in SHU
 - 提供邮件提醒功能
 - 使用多线程
 #### 网上教学平台
-- 导出同课程同学名单
+- 提供基于超星帐号的登录方式
 - 提高课程访问次数
 - 侦测签到活动
 - 导出各课程作业截止日期

@@ -7,7 +7,7 @@ passwords = []
 
 # You can do predesigned tasks here
 def unattended():
-    for i in range(3, len(usernames)):
+    for i in range(0, len(usernames)):
         username = usernames[i]
         password = passwords[i]
         cx = CXer(username, password)
@@ -16,6 +16,8 @@ def unattended():
         cx.check()
         cx.get_courses()
         cx.choose_course()
+        cx.cur_course.show_infor()
+        cx.cur_course.get_mates()
         cx.cur_course.getopics()
         cx.cur_course.topic_files()
 
@@ -35,6 +37,7 @@ def init(cur_id):
         return False
     cx.choose_course()
     cx.cur_course.getopics()
+    cx.cur_course.get_mates()
     cx.cur_course.topic_files()
     cx.cur_course.send_replies()
 

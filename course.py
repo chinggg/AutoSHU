@@ -7,16 +7,44 @@ from urllib.parse import *
 class Course:
     def __init__(self, r, name, sess):
         pat_bbs = 'href="(/bbscircle/grouptopic.*?)"'
+        pat_stat = 'href="(/moocAnalysis.*?)"'
         self.sess = sess
         self.base = 'http://mooc1.elearning.shu.edu.cn'
         self.name = name
         self.home = r
+        self.params = my_urlparser(r.url)
+        self.stat_url = self.base + re.search(pat_stat, r.text, re.S).group(1)
         self.bbs_url = self.base + re.search(pat_bbs, r.text, re.S).group(1)
+        self.mate_url = 'http://mooc1.elearning.shu.edu.cn/moocAnalysis/classmateList'
         self.topics = []
+        self.mates = set()
 
-    def learn(self):
-        return
-
+    def show_infor(self):
+        print("课程名称:",self.name)
+        print("课程主页:",self.home.url)
+        print("课程参数:",self.params) 
+        print("统计页面:",self.stat_url)
+        print("讨论页面:",self.bbs_url)
+        
+    def get_mates(self):
+        pat_sname = r'default">\s+(.*?)\s+</a>'
+        pat_lst = r'href="(/moocAnalysis/classmateList.*?)"'
+        pat_tot = '总人数\((.*?)\)'
+        stat_html = self.sess.get(self.stat_url).text
+        tot = int(re.search(pat_tot, stat_html, re.S).group(1))
+        if len(self.mates) >= tot-1:
+            print("同学人数仍为",len(self.mates))
+            return self.mates
+        url = self.base + re.search(pat_lst, stat_html, re.S).group(1)
+        form = my_urlparser(url)
+        for i in range(1,5):
+            form["classmateNUM"] = i
+            html = self.sess.post(self.mate_url, data=form).text
+            self.mates.update(re.findall(pat_sname, html, re.S)) 
+        print(self.mates)
+        print("同学人数",len(self.mates))
+        return self.mates
+            
     def getopics(self):
         print("topic url:", self.bbs_url)
         html = self.sess.get(self.bbs_url).text
