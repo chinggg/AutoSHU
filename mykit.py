@@ -58,6 +58,15 @@ def read2cols(filename, c1, c2):
             c2.append(lst[1].strip())
 
 
+def my_urlparser(url):
+    s = url.split('?')[1]
+    params = s.split('&')
+    dic = {}
+    for x in params:
+        dic[x.split('=')[0]] = x.split('=')[1]
+    return dic
+
+
 def rlog(r):
     print(r, r.url)
     print("Response Headers:", r.headers)
