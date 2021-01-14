@@ -1,7 +1,7 @@
 import requests
 
 class User:
-    def __init__(self, id, pwd):
+    def __init__(self, username, password):
         self.headers = {
             "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
             "accept-encoding": "gzip, deflate",
@@ -12,5 +12,5 @@ class User:
         }
         self.sess = requests.Session()
         self.sess.headers.update(self.headers)
-        self.username = id
-        self.password = pwd
+        self.username = username
+        self.password = password
