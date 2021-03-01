@@ -33,6 +33,11 @@ An extensible python script to automatically do trivial tasks in SHU
 - 提高课程访问次数
 - 侦测签到活动
 - 导出各课程作业截止日期
+#### 云实验室
+
+- 定时申请上机
+- 自动初始化并执行任务
+
 #### 教务管理系统
 - 导出所修课程及成绩
 - 固定查询空教室
