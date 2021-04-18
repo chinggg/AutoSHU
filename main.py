@@ -7,7 +7,7 @@ passwords = []
 
 # You can do predesigned tasks here
 def unattended():
-    for i in range(0, len(usernames)):
+    for i in range(len(usernames)):
         username = usernames[i]
         password = passwords[i]
         cx = CXer(username, password)

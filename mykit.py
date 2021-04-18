@@ -13,8 +13,7 @@ headers = {
 
 def headers2json(headers):
     dic = {}
-    lines = headers.split('\n')
-    for line in lines:
+    for line in headers.split('\n'):
         if line.strip() == '':
             continue
         strs = line.split(':', 1)
@@ -22,6 +21,7 @@ def headers2json(headers):
     print(json.dumps(dic))
     with open("headers.json", "w") as file:
         json.dump(dic, file)
+    return dic
 
 
 # eg. 1-3,6-7,8
@@ -58,12 +58,15 @@ def read2cols(filename, c1, c2):
             c2.append(lst[1].strip())
 
 
-def my_urlparser(url):
+def my_urlparser(url, keep_blank_values=True):
     s = url.split('?')[1]
     params = s.split('&')
     dic = {}
     for x in params:
-        dic[x.split('=')[0]] = x.split('=')[1]
+        k, v = x.split('=')
+        if not keep_blank_values and not v:
+            continue
+        dic[k] = v
     return dic
 
 

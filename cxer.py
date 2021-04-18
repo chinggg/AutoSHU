@@ -6,12 +6,14 @@ from course import Course
 
 
 class CXer(User):
+
+    login_url = "http://www.elearning.shu.edu.cn/login/to"
+    check_url = "http://i.mooc.elearning.shu.edu.cn/space/index.shtml"
+    courselist_url = "http://www.elearning.shu.edu.cn/courselist/study"
+    api_url = "http://mooc1-api.chaoxing.com/mycourse/backclazzdata?view=json&rss=1"
+
     def __init__(self, username, password):
         super().__init__(username, password)
-        self.login_url = "http://www.elearning.shu.edu.cn/login/to"
-        self.check_url = "http://i.mooc.elearning.shu.edu.cn/space/index.shtml"
-        self.courselist_url = "http://www.elearning.shu.edu.cn/courselist/study"
-        self.api_url = "http://mooc1-api.chaoxing.com/mycourse/backclazzdata?view=json&rss=1"
         self.courses = []
         self.cur_course = ""
 
@@ -31,11 +33,13 @@ class CXer(User):
     def login(self):
         print(f"{self.username} is trying to login...")
         r = self.sess.get(self.login_url)
-        logind = self.sess.post(r.url, data={'username': self.username, 'password': self.password, 'login_submit': ''})
+        rlog(r)
+        logind = self.sess.post(r.url, data={'username': self.username, 'password': self.enword})
+        rlog(logind)
         finalurl = self.find_url(logind.text)
         if 'http' not in finalurl:
             print("Wrong username or password! Please try again.")
-            return 
+            return
         token = self.find_token(logind.text)
         finalr = self.sess.post(finalurl, data=token)
 
@@ -44,6 +48,7 @@ class CXer(User):
         r = self.sess.get(self.check_url)
         if 'personalName' in r.text:
             name = re.search(pat, r.text, re.S).group(1)
+            self.realname = name
             print(f"login success! {name}")
             return True
         else:
@@ -68,5 +73,5 @@ class CXer(User):
         else:
             i = int(input("Please choose one course:"))
         self.cur_course = Course(self.sess.get(self.courses[i][0]), self.courses[i][1], self.sess)
-        print("Now you are visiting", self.cur_course, self.cur_course.name)
+        print("Now you are visiting", self.cur_course)
         return self.cur_course
