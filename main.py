@@ -1,5 +1,6 @@
 from cxer import *
 from course import *
+from time import sleep
 
 usernames = []
 passwords = []
@@ -10,16 +11,15 @@ def unattended():
     for i in range(len(usernames)):
         username = usernames[i]
         password = passwords[i]
-        cx = CXer(username, password)
-        print("logining:", username, password)
-        cx.login()
-        cx.check()
-        cx.get_courses()
-        cx.choose_course()
-        cx.cur_course.show_infor()
-        cx.cur_course.get_mates()
-        cx.cur_course.getopics()
-        cx.cur_course.topic_files()
+        try:
+            cx = CXer(username, password)
+            for i, c in enumerate(cx):
+                    cx.choose_course(i)
+                    cx.cur_course.getopics()
+                    cx.cur_course.topic_files()
+        except LoginError:
+            sleep(3)
+            continue
 
 
 # You can do what you want by calling functions manually
@@ -45,7 +45,7 @@ def init(cur_id):
 def main():
     cur_id = -1
     read2cols('key.txt', usernames, passwords)
-    # unattended()
+    unattended()
     while True:
         init(cur_id)
         for x in enumerate(usernames):

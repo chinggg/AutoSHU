@@ -9,7 +9,7 @@ An extensible python script to automatically do trivial tasks in SHU
 - 使用Requests库模拟请求，有较好的跨平台性
 - 以用户为单位，便于多帐户批量操作
 - 目前无图形界面，资源占用低
-- 无异常处理，精简代码数量，便于用户自行修改维护
+- 含异常处理，改善用户体验
 ## 用法
 直接运行`main.py`  
 用户信息存放于`key.txt`中
