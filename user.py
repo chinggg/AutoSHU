@@ -1,7 +1,8 @@
 import requests
 import rsa
 import base64
-
+from requests.packages.urllib3.util.retry import Retry
+from requests.adapters import HTTPAdapter
 
 HEADERS = {
         "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
@@ -24,10 +25,15 @@ def enc(password):
     crypto = base64.b64encode(rsa.encrypt(password.encode('utf-8'), pub_key)).decode()
     return crypto
 
+retry = Retry(connect=3, backoff_factor=0.5)
+adapter = HTTPAdapter(max_retries=retry)
+
 class User:
     def __init__(self, username, password):
         self.sess = requests.Session()
         self.sess.headers.update(HEADERS)
+        self.sess.mount('http://', adapter)
+        self.sess.mount('https://', adapter)
         self.username = str(username)
         self.password = str(password)
         self.enword = enc(password)
