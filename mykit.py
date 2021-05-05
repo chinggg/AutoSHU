@@ -45,13 +45,15 @@ def parsein(s):
     return result
 
 
-# read pairs of values from a file, split by space, '#' to ignore
-def read2cols(filename, c1, c2):
-    with open(filename, 'r', encoding='utf-8') as fs:
-        lines = fs.readlines()
+def read2cols(filename, c1, c2, sep=' '):
+    '''read pairs of values from a file
+       split by space, '#' to ignore
+    '''
+    with open(filename, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
         for s in lines:
             s = s.strip()
-            lst = s.split(' ')
+            lst = s.split(sep)
             if '#' in lst[0]:
                 continue
             c1.append(lst[0].strip())
