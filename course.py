@@ -6,45 +6,48 @@ from urllib.parse import *
 
 class Course:
 
-    pat_bbs = 'href="(/bbscircle/grouptopic.*?)"'
-    pat_stat = 'href="(/moocAnalysis.*?)"'
+    pat_stat = re.compile('href="(/moocAnalysis.*?)"', re.S)
+    pat_bbs = re.compile('href="(/bbscircle/grouptopic.*?)"', re.S)
+    pat_hw = re.compile('data="(/work/getAllWork.*?)"', re.S)
     base_url = 'http://mooc1.elearning.shu.edu.cn'
     mate_url = 'http://mooc1.elearning.shu.edu.cn/moocAnalysis/classmateList'
 
-    def __init__(self, r, name="NULL", sess=None):
+    def __init__(self, url='', name='', sess=None):
         self.sess = sess
         self.name = name
-        self.home = r
-        self.params = my_urlparser(r.url)
-        self.stat_url = self.base_url + re.search(self.pat_stat, r.text, re.S).group(1)
-        self.bbs_url = self.base_url + re.search(self.pat_bbs, r.text, re.S).group(1)
+        self.r = self.sess.get(url)
+        self.params = my_urlparser(url)
+        self.stat_url = self.base_url + self.pat_stat.search(self.r.text).group(1)
+        self.bbs_url = self.base_url + self.pat_bbs.search(self.r.text).group(1)
+        self.hw_url = self.base_url + self.pat_hw.search(self.r.text).group(1)
         self.topics = []
+        self.hws = []
         self.mates = set()
 
     def __str__(self):
         return (
             f'\n课程名称: {self.name}\n'
-            f'课程主页: {self.home.url}\n'
+            f'课程主页: {self.r.url}\n'
             f'课程参数: {self.params}\n'
             f'统计页面: {self.stat_url}\n'
             f'讨论页面: {self.bbs_url}\n'
         )
 
     def get_mates(self):
-        pat_sname = r'default">\s+(.*?)\s+</a>'
-        pat_lst = r'href="(/moocAnalysis/classmateList.*?)"'
-        pat_tot = '总人数\((.*?)\)'
+        pat_sname = re.compile(r'default">\s+(.*?)\s+</a>', re.S)
+        pat_lst = re.compile(r'href="(/moocAnalysis/classmateList.*?)"', re.S)
+        pat_tot = re.compile('总人数\((.*?)\)', re.S)
         stat_html = self.sess.get(self.stat_url).text
-        tot = int(re.search(pat_tot, stat_html, re.S).group(1))
+        tot = int(pat_tot.search(stat_html).group(1))
         if len(self.mates) >= tot-1:
             print("同学人数仍为",len(self.mates))
             return self.mates
-        url = self.base_url + re.search(pat_lst, stat_html, re.S).group(1)
+        url = self.base_url + pat_lst.search(stat_html).group(1)
         form = my_urlparser(url)
         for i in range(1,5):
             form["classmateNUM"] = i
             html = self.sess.post(self.mate_url, data=form).text
-            self.mates.update(re.findall(pat_sname, html, re.S))
+            self.mates.update(pat_sname.findall(html))
         print(self.mates)
         print("同学人数",len(self.mates))
         return self.mates
@@ -52,9 +55,9 @@ class Course:
     def getopics(self):
         print("topic url:", self.bbs_url)
         html = self.sess.get(self.bbs_url).text
-        pat = "openDetail\('(.*?)'\).*?<span.*?>(\S+)<"
+        pat = re.compile("openDetail\('(.*?)'\).*?<span.*?>(\S+)<", re.S)
         # pat = '置顶.*?"(/bbscircle/gettopicdetail.*?)".*?<span.*?>(.*?)</span>'
-        topics = re.findall(pat, html, re.S)
+        topics = pat.findall(html)
         for i in range(len(topics)):
             topics[i] = list(topics[i])
             topics[i][0] = self.base_url + topics[i][0]
@@ -145,3 +148,9 @@ class Course:
                     print(f"NO.{i} topic replied and praised!")
 
         print("All replies you chose have been sent! FINISHED!")
+
+    def get_hw(self):
+        pat = re.compile('<a.*?href="/work.*?title="\s*(.*?)\s*".*?截止时间：</span>\s*(.*?)\s*</span>.*?作业状态.*?<strong>\s*(.*?)\s*</strong>', re.S)
+        html = self.sess.get(self.hw_url).text
+        hws = pat.findall(html)
+        print(hws)
