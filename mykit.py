@@ -14,7 +14,7 @@ headers = {
 def headers2json(headers):
     dic = {}
     for line in headers.split('\n'):
-        if line.strip() == '':
+        if not line.strip():
             continue
         strs = line.split(':', 1)
         dic[strs[0].strip()] = strs[1].strip()
@@ -45,10 +45,12 @@ def parsein(s):
     return result
 
 
-def read2cols(filename, c1, c2, sep=' '):
+def read2cols(filename, c1=None, c2=None, sep=' '):
     '''read pairs of values from a file
        split by space, '#' to ignore
     '''
+    c1 = [] if c1 is None else c1
+    c2 = [] if c2 is None else c2
     with open(filename, 'r', encoding='utf-8') as f:
         lines = f.readlines()
         for s in lines:
@@ -58,6 +60,7 @@ def read2cols(filename, c1, c2, sep=' '):
                 continue
             c1.append(lst[0].strip())
             c2.append(lst[1].strip())
+    return c1, c2
 
 
 def my_urlparser(url, keep_blank_values=True):
@@ -82,6 +85,9 @@ def rlog(r):
     print("")
     # print("Response Text",r.text)
 
+def dic2csv(dic, sep=',', cols=None):
+    cols = cols or dic.keys()
+    return sep.join([str(dic[x]) for x in cols])
 
 if __name__ == '__main__':
     print("This is just a collection of my pieces of code.")
