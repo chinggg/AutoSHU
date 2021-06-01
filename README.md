@@ -3,16 +3,16 @@ An extensible python script to automatically do trivial tasks in SHU
 
 ---
 ## 简介
-在使用Python编写小脚本的过程中逐渐产生了将它们汇总起来的想法，于是启动了这个Web自动化小项目，致力于减少SHU生活中的重复操作，节省学生时间，便利信息导出
+在使用 Python 编写小脚本的过程中逐渐产生了将它们汇总起来的想法，于是启动了这个 Web 自动化小项目，致力于减少 SHU 生活中的重复操作，节省学生时间，便利信息导出
 ## 特性
 - 面向对象的设计思路，模块化结构，扩展性良好，便于协同开发
-- 使用Requests库模拟请求，有较好的跨平台性
+- 使用 Requests 库模拟请求，有较好的跨平台性
 - 以用户为单位，便于多帐户批量操作
 - 目前无图形界面，资源占用低
 - 含异常处理，改善用户体验
 ## 用法
-直接运行`main.py`  
-用户信息存放于`key.txt`中
+`python3 main.py -u username -p password --topic --hw`  
+优先使用参数中的账户密码登录，可用 `-f` 参数指定存放用户信息的文件，否则读取 `key.txt`
 ## 已实现功能
 
 目前所有信息仅输出在屏幕，并未保存至本地。
@@ -20,7 +20,9 @@ An extensible python script to automatically do trivial tasks in SHU
 #### 网上教学平台
 - 批量回复讨论区话题
 - 批量获取讨论区文件链接
-- 获得某课程同学人数及名单
+- 批量获取课程同学人数及名单
+- 批量获取作业名称与截止日期
+
 ## 预期功能
 #### 总体架构
 - 完善业务逻辑，统一代码风格，使结构清晰便于维护
@@ -32,7 +34,6 @@ An extensible python script to automatically do trivial tasks in SHU
 - 提供基于超星帐号的登录方式
 - 提高课程访问次数
 - 侦测签到活动
-- 导出各课程作业截止日期
 #### 教务管理系统
 - 导出所修课程及成绩
 - 固定查询空教室
