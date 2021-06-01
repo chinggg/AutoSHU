@@ -30,6 +30,12 @@ class CXer(User):
     def __len__(self):
         return len(self.courses)
 
+    def __call__(self, args):
+        for i, (url, name) in enumerate(self):
+            if args.course and args.course not in name:
+                continue
+            self[i](args)
+
     def find_url(self, html):
         pat = re.compile('action="(.*?)"', re.S)
         try:
@@ -91,6 +97,7 @@ class CXer(User):
         self.cur_course = Course(self.courses[i][0], self.courses[i][1], self.sess)
         print("Now you are visiting", self.cur_course)
         return self.cur_course
+
 
 if __name__ == '__main__':
     cxer = CXer(19129999, 'WillThrowError', 3)

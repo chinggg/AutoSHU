@@ -1,7 +1,6 @@
 import re
 import requests
 from mykit import *
-from urllib.parse import *
 
 
 class Course:
@@ -32,6 +31,13 @@ class Course:
             f'统计页面: {self.stat_url}\n'
             f'讨论页面: {self.bbs_url}\n'
         )
+
+    def __call__(self, args=None):
+        if args is None or args.hw:
+            self.get_hw()
+        if args is None or args.topic:
+            self.getopics()
+            self.topic_files()
 
     def get_mates(self):
         pat_sname = re.compile(r'default">\s+(.*?)\s+</a>', re.S)

@@ -1,61 +1,43 @@
-from cxer import *
-from course import *
-from time import sleep
+from cxer import CXer
+from error import TooManyReqError, LoginError
+from mykit import read2cols
+import time
+import argparse
 
 usernames = []
 passwords = []
 
 
-# You can do predesigned tasks here
-def unattended():
-    for i in range(len(usernames)):
-        username = usernames[i]
-        password = passwords[i]
-        try:
-            cx = CXer(username, password)
-            for i, c in enumerate(cx):
-                    cx.choose_course(i)
-                    cx.cur_course.getopics()
-                    cx.cur_course.topic_files()
-        except LoginError:
-            sleep(3)
-            continue
-
-
-# You can do what you want by calling functions manually
-def init(cur_id):
-    for x in enumerate(usernames):
-        print(x)
-    if cur_id == -1:
-        cur_id = int(input("Please choose one user:"))
-    cx = CXer(usernames[cur_id], passwords[cur_id])
-    cx.login()
-    if cx.check():
-        cx.get_courses()
-    else:
-        print()
-        return False
-    cx.choose_course()
-    cx.cur_course.getopics()
-    cx.cur_course.get_mates()
-    cx.cur_course.topic_files()
-    cx.cur_course.send_replies()
-
-
-def main():
-    cur_id = -1
-    read2cols('key.txt', usernames, passwords)
-    unattended()
-    while True:
-        init(cur_id)
-        for x in enumerate(usernames):
-            print(x)
-        sta = int(input("Current work has finished, please enter new number to continue(-1 to exit):"))
-        if sta == -1:
-            return
-        else:
-            init(sta)
+def unattended(username, password, args):
+    print("Will do predesigned work for ", username)
+    try:
+        cx = CXer(username, password)
+        cx(args)
+        # for i, c in enumerate(cx):
+        #     if args.course and args.course not in c[1]:
+        #         continue
+        #     cs = cx[i]
+        #     print(cs)
+        #     cs(args)
+    except TooManyReqError:
+        time.sleep(60)
+    except LoginError:
+        time.sleep(3)
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='AutoSHU')
+    parser.add_argument("-u", "--username", help="username")
+    parser.add_argument("-p", "--password", help="password")
+    parser.add_argument("-f", "--filename", help="specify filename that stores username and password")
+    parser.add_argument("--topic", action='store_true', help="password")
+    parser.add_argument("--hw", action='store_true', help="show homeworks ddl")
+    parser.add_argument("--course", help='specify course name keyword')
+    args = parser.parse_args()
+    args.filename = args.filename or 'key.txt'
+    if args.username and args.password:
+        unattended(args.username, args.password, args)
+    else:
+        read2cols(args.filename, usernames, passwords)
+        for username, password in zip(usernames, passwords):
+            unattended(username, password, args)
