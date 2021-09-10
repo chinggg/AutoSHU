@@ -32,7 +32,11 @@ class Course:
             f'讨论页面: {self.bbs_url}\n'
         )
 
+    def __contains__(self, item):
+        return item in str(self)
+
     def __call__(self, args=None):
+        print(self)
         if args is None or args.hw:
             self.get_hw()
         if args is None or args.topic:
@@ -74,7 +78,7 @@ class Course:
         return self.topics
 
     def topic_files(self):
-        pat = 'href="(/ueditor.*?)".*?title="(.*?)">'
+        pat = re.compile('href="(/ueditor.*?)".*?title="(.*?)">', re.S)
         s = input("Trying to collect files. Enter the number(s) of your topic(s):")
         if not s:
             return None
@@ -84,7 +88,8 @@ class Course:
             url = self.topics[i][0]
             print(f"No.{i}:{url}")
             html = self.sess.get(url).text
-            files = re.findall(pat, html, re.S)
+            files = pat.findall(html)
+            files = [(self.base_url+href, name) for href, name in files]
             print(files)
 
     def check_reply(self, html):

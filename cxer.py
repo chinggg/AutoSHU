@@ -18,7 +18,7 @@ class CXer(User):
         super().__init__(username, password)
         self.login()
         self.courses = self.get_courses(term)
-        self.cur_course = ""
+        self.cur_course = ''  # deprecated
 
     def __iter__(self):
         yield from self.courses

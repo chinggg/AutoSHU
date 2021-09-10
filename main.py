@@ -23,6 +23,7 @@ def unattended(username, password, args):
         time.sleep(60)
     except LoginError:
         time.sleep(3)
+    time.sleep(5)
 
 
 if __name__ == '__main__':
